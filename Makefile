@@ -1,4 +1,4 @@
-# Copyright 2023 Alexandru Olaru.
+# Copyright 2024 Alexandru Olaru.
 # Distributed under the MIT license.
 
 VER_MAJ            := 0
@@ -34,20 +34,28 @@ MODULEOBJS         :=
 MODULE_INCLUDEDIRS :=
 EXPORT_APIS        :=
 
-DRY_DEPS           := install_apis apisinfo buildinfo conf clean mrclean help
+DRY_DEPS           := buildinfo conf clean mrclean help
 ifeq ($(filter $(DRY_DEPS),$(MAKECMDGOALS)),)
-	CHEW := 1
+	BUILDING := 1
 else
-	CHEW := 0
+	BUILDING := 0
 endif
 
-ifeq ($(CHEW), 1)
+ifeq ($(BUILDING), 1)
 	LLVM=$(shell $(TOOLSDIR)/is-llvm.sh)
 	ifneq ($(LLVM),1)
-        $(error You need an LLVM toolchain to build dxgmx. Current CC is $(shell which ${CC}))
+        $(error You need an LLVM toolchain to build dxgmx. Run make help to see relevant env variables)
 	endif
 endif
 
+HAS_CONFIG=$(shell test -f $(CONFIG_FILE) && echo 1 || echo 0)
+ifeq ($(BUILDING), 1)
+    ifeq ($(HAS_CONFIG), 0)
+        $(error Config file '$(CONFIG_FILE)' is missing or is not a file)
+    endif
+endif
+
+# - in case we are running a dry target
 -include $(CONFIG_FILE)
 
 # Translate arch into src arch.
@@ -144,6 +152,10 @@ $(KERNEL_BIN): $(CORE_DEPS) $(ALL_OBJS) $(LDSCRIPT)
 	@$(PRETTY_PRINT) LD $(shell basename $@)
 	@$(LD) -T $(LDSCRIPT) $(ALL_OBJS) $(LDFLAGS) -o $(KERNEL_BIN)
 	@$(TOOLSDIR)/bake_symbols.sh $(KERNEL_BIN)
+
+.PHONY += config_valid
+config_valid: $(TOOL_NCURSES_CONFIG)
+	@$(TOOL_NCURSES_CONFIG) --validate -c $(CONFIG_FILE) -r $(SRCROOT)/root_config_menu.json
 
 $(SYSCALL_DEFS): $(TOOL_SYSCALLS_GEN) $(SYSCALLS_COMMON)
 	@$(PRETTY_PRINT) SYSDEFS $(patsubst $(SRCROOT)/%,%,$@)

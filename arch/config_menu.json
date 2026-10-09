@@ -1,29 +1,30 @@
 {
-    "title": "CPU",
+    "title": "Architecture",
     "options": [
         {
             "name": "CONFIG_LITTLE_ENDIAN",
-            "title": "Little endianness",
-            "description": "",
+            "title": "Platform is little endian",
             "visible": false
         },
         {
             "name": "CONFIG_32BIT",
-            "title": "Native 32bit CPU",
-            "description": "",
+            "title": "Platform is 32 bit native",
             "visible": false
         },
         {
             "name": "CONFIG_64BIT",
-            "title": "Native 64bit CPU",
-            "description": "",
+            "title": "Platform is 64 bit native",
+            "visible": false
+        },
+        {
+            "name": "CONFIG_32BIT_CAPABLE",
+            "title": "Platform is capable of 32 bit execution even if it's not natively 32 bit",
             "visible": false
         },
         {
             "name": "CONFIG_ARCH",
             "title": "Architecture",
             "type": "input",
-            "description": "",
             "visible": false
         }
     ],

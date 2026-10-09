@@ -566,6 +566,7 @@ int main(int argc, const char** argv)
 
     std::string config_file;
     std::string root_menu_path;
+    bool validate_only = false;
 
     for (size_t i = 1; i < argc; ++i)
     {
@@ -592,6 +593,10 @@ int main(int argc, const char** argv)
             }
 
             root_menu_path = std::string(argv[i + 1]);
+        }
+        else if (!strcmp(argv[i], "--validate"))
+        {
+            validate_only = true;
         }
         else if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h"))
         {
